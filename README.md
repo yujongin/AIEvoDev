@@ -1,207 +1,110 @@
+<div align="center">
+
+<br>
+
 # AIEvoDev
 
-### AI That Writes Tests, Then Makes Them Better
+**AI-Powered Test Evolution**
 
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![LangChain](https://img.shields.io/badge/LangChain-Powered-orange.svg)](https://langchain.com/)
-[![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4-412991.svg)](https://openai.com/)
-[![Google](https://img.shields.io/badge/Google-Gemini-4285F4.svg)](https://deepmind.google/technologies/gemini/)
+Generate tests with GPT-4/Gemini, improve through adversarial mutation.
 
-> **Stop writing tests manually.** Let AI generate them, then watch it improve them through adversarial evolution until they catch real bugs.
+<br>
+
+<a href="https://github.com/DeadManOfficial/AIEvoDev">
+  <img src="https://img.shields.io/badge/GitHub-Source-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
+</a>
+<a href="https://www.python.org">
+  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+</a>
+<a href="https://langchain.com">
+  <img src="https://img.shields.io/badge/LangChain-Powered-F39C12?style=for-the-badge" alt="LangChain" />
+</a>
+
+<br><br>
+
+</div>
 
 ---
 
-## Why AIEvoDev?
-
-- **Save hours** - Generate comprehensive test suites in minutes
-- **Catch more bugs** - Adversarial evolution finds edge cases you'd miss
-- **Self-improving** - Tests get better each generation through mutation testing
-- **Production-ready** - Outputs clean pytest code you can commit directly
-
 ## How It Works
 
-AIEvoDev generates Python unit tests using LLMs (GPT-4 or Gemini), then improves them through an evolutionary loop:
+```
+Generate → Evaluate → Evolve → Repeat
+   │          │          │
+   │     vs Correct     Improve
+   │     vs Mutants     if better
+   └──────────────────────┘
+```
 
-1. **Generate** - AI creates initial test suite from your specification
-2. **Evaluate** - Tests are run against correct code and mutated (buggy) versions
-3. **Evolve** - AI analyzes results and generates improved tests
-4. **Repeat** - Loop continues until tests achieve target fitness
+---
 
-## Quick Start (5 minutes)
-
-### 1. Clone
+## Quick Start
 
 ```bash
 git clone https://github.com/DeadManOfficial/AIEvoDev.git
 cd AIEvoDev
-```
-
-### 2. Install
-
-```bash
-# Create virtual environment (recommended)
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install package
 pip install -e .
-```
 
-### 3. Configure API Keys
-
-```bash
+# Configure API key
 cp .env.example .env
-```
 
-Edit `.env` and add at least one API key:
-
-```env
-OPENAI_API_KEY=sk-your-key-here
-# OR
-GEMINI_API_KEY=your-gemini-key-here
-```
-
-### 4. Run
-
-```bash
-# Initialize project structure
+# Run
 aievodev init
-
-# Try the example
 aievodev run specs/example_test_spec.yaml src/utils.py
 ```
 
-## Usage
+---
 
-### Create a Test Specification
+## Features
 
-```bash
-aievodev spec-create my_function
-```
+| Feature | Description |
+|---------|-------------|
+| **Auto Generation** | Create test suites in minutes |
+| **Evolution** | Tests improve each generation |
+| **Mutation Testing** | Finds edge cases you'd miss |
+| **Production Ready** | Outputs clean pytest code |
 
-This creates `specs/my_function_spec.yaml`. Edit it to define:
-- Target function details
-- Test coverage requirements
-- Edge cases to cover
-- Framework (pytest/unittest)
-
-### Run Test Generation
-
-```bash
-aievodev run specs/my_spec.yaml path/to/your_function.py
-```
-
-Options:
-- `--generations 5` - Number of evolution iterations (default: 5)
-- `--model gpt-4o-mini` - LLM model to use
-
-### View Results
-
-```bash
-# List all evolution runs
-aievodev history
-
-# Select best tests from a run
-aievodev select <run_id>
-```
-
-## Example Specification
-
-```yaml
-problem_statement: "Generate tests for calculate_average function"
-
-target_function_info:
-  name: "calculate_average"
-  signature: "def calculate_average(numbers: list[int]) -> float:"
-
-test_specifications:
-  framework: "pytest"
-  min_coverage_percentage: 90
-  test_cases_to_include:
-    - functional_correctness:
-        - "positive integers"
-        - "negative integers"
-    - edge_cases:
-        - "empty list (should raise ValueError)"
-        - "single element"
-
-adversarial_goals:
-  maximize_bug_detection_rate: "Tests should catch common bugs"
-  minimize_false_positives: "Tests must pass on correct implementation"
-```
-
-## Project Structure
-
-```
-AIEvoDev/
-├── config/
-│   └── llm_config.ini      # LLM settings
-├── specs/                  # Your test specifications
-│   └── example_test_spec.yaml
-├── output/                 # Generated tests (created at runtime)
-│   └── evolution_runs/
-├── src/
-│   ├── agents/             # LangChain ReAct agent
-│   ├── core/               # CLI and orchestration
-│   ├── drq_engine/         # Evolution loop
-│   ├── environment/        # Test execution sandbox
-│   ├── llm_api_connectors/ # LLM providers
-│   ├── prompts/            # Prompt templates
-│   ├── spec_parser/        # YAML parsing
-│   └── utils/              # Fault injection
-├── .env.example            # Environment template
-├── pyproject.toml          # Package config
-└── requirements.txt        # Dependencies
-```
-
-## How the Evolution Works
-
-```
-┌─────────────┐     ┌──────────────┐     ┌─────────────────┐
-│   Generate  │────▶│   Evaluate   │────▶│   Score Tests   │
-│    Tests    │     │  vs Correct  │     │                 │
-└─────────────┘     │  vs Mutants  │     │ - Pass rate     │
-       ▲            └──────────────┘     │ - Coverage      │
-       │                                 │ - Bug detection │
-       │            ┌──────────────┐     └────────┬────────┘
-       └────────────│   Improve    │◀─────────────┘
-                    │   (if better)│
-                    └──────────────┘
-```
-
-**Fitness Score** combines:
-- Test pass rate on correct code (no false positives)
-- Code coverage percentage
-- Bug detection rate (catches injected faults)
+---
 
 ## Supported LLMs
 
-| Provider | Models | Config Key |
-|----------|--------|------------|
-| OpenAI | gpt-4o-mini, gpt-4o, gpt-4-turbo | OPENAI_API_KEY |
-| Google | gemini-2.0-flash, gemini-pro | GEMINI_API_KEY |
+| Provider | Models |
+|----------|--------|
+| OpenAI | gpt-4o-mini, gpt-4o, gpt-4-turbo |
+| Google | gemini-2.0-flash, gemini-pro |
 
-## Requirements
+---
 
-- Python 3.10+
-- OpenAI or Google Gemini API key
-- pytest, coverage (installed automatically)
+## Related
 
-## Troubleshooting
+- **[mcp-auditor](https://github.com/DeadManOfficial/mcp-auditor)** — Security auditor for Claude
+- **[token-optimization](https://github.com/DeadManOfficial/token-optimization)** — Save 30-50% on API costs
+- **[DeadManIntelligenceCommand](https://github.com/DeadManOfficial/DeadManIntelligenceCommand)** — 5-agent intel platform
 
-**"API key not found"**
-- Check your `.env` file has the correct key
-- Ensure the key name matches `config/llm_config.ini`
-
-**"Module not found"**
-- Run `pip install -e .` from the project root
-- Ensure your virtual environment is activated
-
-**Tests timeout**
-- Increase timeout in `src/environment/testing_env.py`
-- Check for infinite loops in generated tests
+---
 
 ## License
 
 MIT
+
+---
+
+<div align="center">
+
+<br>
+
+<a href="https://twitter.com/DeadManAI">
+  <img src="https://img.shields.io/badge/X-000000?style=flat&logo=x&logoColor=white" alt="X" />
+</a>
+<a href="https://youtube.com/@DeadManAI">
+  <img src="https://img.shields.io/badge/YouTube-FF0000?style=flat&logo=youtube&logoColor=white" alt="YouTube" />
+</a>
+<a href="https://tiktok.com/@DeadManAI">
+  <img src="https://img.shields.io/badge/TikTok-000000?style=flat&logo=tiktok&logoColor=white" alt="TikTok" />
+</a>
+
+<br><br>
+
+<sub>**BUILD > BUY**</sub>
+
+</div>
